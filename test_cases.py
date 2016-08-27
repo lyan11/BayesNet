@@ -1,12 +1,10 @@
 from bnet import *
 import itertools
 
-#Note: The tests here are NOT Comprehensive
-#
 #Helper function to reorder a factor's scope---produces a new factor.
 #depends on the variables in the scope having names.
 #Generates a new factor equivalent to the input factor f but with
-#the scope ordered according to the list "scope_names" 
+#the scope ordered according to the list "scope_names"
 def reorder_factor_scope(f, scope_names):
     #get variables in order of scope_names
     d = dict()
@@ -29,7 +27,7 @@ def reorder_factor_scope(f, scope_names):
 def scopesEquiv(s1, s2):
     #s1 and s2 are lists of variables.
     return set(s1) == set(s2)
-    
+
 #maximum difference allowed between equivalent values
 epsilon = 0.0001
 
@@ -40,7 +38,7 @@ def comparetable(factor, values):
 
     outstring = ""
     counter = 0
-    
+
     for i in range(0,len(values)):
 
         if(abs(factor.values[i] - values[i]) > epsilon):
@@ -54,22 +52,22 @@ def comparetable(factor, values):
 def derankmismatch(factor, index):
 
     outstr = "P("
-    
+
     value = index
     scope = factor.get_scope()
 
     variableindex = []
-    
+
     for v in reversed(scope):
-        
-        variableindex.append(int(value % v.domain_size()))        
+
+        variableindex.append(int(value % v.domain_size()))
         value = int(value / v.domain_size())
-       
+
     variableindex = list(reversed(variableindex))
 
-    for i in range(0, len(scope)):    
+    for i in range(0, len(scope)):
         outstr += ("{} = {},".format(scope[i].name, scope[i].dom[variableindex[i]]))
-    
+
     return outstr[:-1] + ")"
 
 
@@ -77,7 +75,7 @@ def derankmismatch(factor, index):
 def scopefilter(scope):
     ret = []
     for i in scope:
-        ret.append(repr(i))       
+        ret.append(repr(i))
     return ret
 
 #Factor Restriction Test Class
@@ -95,7 +93,7 @@ class RestrictionTest:
 
     def test(self):
         #answer[0] : the desired scope
-        #answer[1] : the desired table values                
+        #answer[1] : the desired table values
 
         print("\nRunning Test : {}".format(self.name))
         mark = 0
@@ -105,7 +103,7 @@ class RestrictionTest:
             print("\t[+] Scope of the resulting factor matches expected result")
         else:
             print("\t[!] Scope of the resulting factor does not match expected result : ")
-            print("\t\tExpected: " + repr(self.answer[0]))            
+            print("\t\tExpected: " + repr(self.answer[0]))
             print("\t\tActual:  " + repr(scopefilter(result.get_scope())))
         if(scopetest):
             result = reorder_factor_scope(result, self.answer[0])
@@ -120,16 +118,16 @@ class RestrictionTest:
                     print("\t[+] input factor was changed")
             else:
                 print("\t[!] Factor values mismatch the expected result in {} place{}:\n".format(tabletest[0], "" if (tabletest[0] == 1) else "s"))
-                print(tabletest[1])        
+                print(tabletest[1])
         return mark, self.points
-                
-        
+
+
 #Factor Variable Sum Out Test Class
 class SummationTest:
     #factor is the factor to sum over, variable is the variable to sum out
     def __init__(self, factor, variable, answer, points, name="sum out variable test"):
         #answer[0] : the desired scope
-        #answer[1] : the desired table values                
+        #answer[1] : the desired table values
         self.name = name
         self.factor = factor
         self.variable = variable
@@ -145,9 +143,9 @@ class SummationTest:
             print("\t[+] Scope of the resulting factor matches expected result")
         else:
             print("\t[!] Scope of the resulting factor does not match expected result : ")
-            print("\t\tExpected: " + repr(self.answer[0]))            
+            print("\t\tExpected: " + repr(self.answer[0]))
             print("\t\tActual:  " + repr(scopefilter(result.get_scope())))
-                        
+
         if(scopetest):
             result = reorder_factor_scope(result, self.answer[0])
             tabletest = comparetable(result, self.answer[1])
@@ -161,10 +159,10 @@ class SummationTest:
                     print("\t[+] input factor was changed")
             else:
                 print("\t[!] Factor values mismatch the expected result in {} place{}:\n".format(tabletest[0], "" if (tabletest[0] == 1) else "s"))
-                print(tabletest[1])        
-            
+                print(tabletest[1])
+
         return mark, self.points
-                
+
 #Factor Multiplication Test Class
 class MultiplyTest:
     #factors is a list of factors to multiply
@@ -173,20 +171,20 @@ class MultiplyTest:
         self.factors = factors
         self.answer = answer
         self.points = points
-                 
-                 
+
+
     def test(self):
         #answer[0] : the desired scope
-        #answer[1] : the desired table values                
+        #answer[1] : the desired table values
         print("\nRunning Test : {}".format(self.name))
         mark = 0
-        result = multiply_factors(self.factors)                        
+        result = multiply_factors(self.factors)
         scopetest = scopesEquiv(self.answer[0],scopefilter(result.get_scope()))
         if(scopetest):
             print("\t[+] Scope of the resulting factor matches expected result")
         else:
             print("\t[!] Scope of the resulting factor does not match expected result : ")
-            print("\t\tExpected: " + repr(self.answer[0]))            
+            print("\t\tExpected: " + repr(self.answer[0]))
             print("\t\tActual:  " + repr(scopefilter(result.get_scope())))
 
         if(scopetest):
@@ -200,13 +198,13 @@ class MultiplyTest:
                     print("\t[+] [{}/{}]".format(mark, self.points))
                 else:
                     print("\t[+] input factor was changed")
-            else: 
+            else:
                 print("\t[!] Factor values mismatch the expected result in {} place{}:\n".format(tabletest[0], "" if (tabletest[0] == 1) else "s"))
-                print(tabletest[1])        
-            
+                print(tabletest[1])
+
         return mark, self.points
 
-#Variable Elimination Test Class    
+#Variable Elimination Test Class
 class VETest:
 
 
@@ -220,35 +218,35 @@ class VETest:
         self.points = points
 
         self.evidenceVars = []
-        
+
         for i in self.evidence:
             i[0].set_evidence(i[1])
             self.evidenceVars.append(i[0])
-                         
+
     def test(self):
         #answer[0] : a list of probabilities for the values for queryVariable
         mark = 0
         for i in self.evidence:
             i[0].set_evidence(i[1])
-        result = VE(self.net, self.queryVariable, self.evidenceVars)                 
+        result = VE(self.net, self.queryVariable, self.evidenceVars)
 
-        querytest = True 
+        querytest = True
 
         for i in range(0,len(self.answer[0])):
             if( abs(self.answer[0][i] - result[i]) > epsilon):
-                querytest = False        
+                querytest = False
 
         print("\nRunning Test : {}".format(self.name))
 
-        
-        
+
+
         if(querytest):
             print("\t[+] Probability distribution of the query variable matches the expected results")
             mark = self.points
             print("\t[+] [{}/{}]".format(mark, self.points))
         else:
             print("\t[!] Probability distribution of the query variable does not match the expected results : ")
-            print("\t\tExpected: " + repr(self.answer[0]))            
+            print("\t\tExpected: " + repr(self.answer[0]))
             print("\t\tActual:  " + repr(result))
 
         return mark, self.points
@@ -258,22 +256,22 @@ class VETest:
     #def getanswer(self):
     #    for i in self.evidence:
     #        i[0].set_evidence(i[1])
-    #    result = VE(self.net, self.queryVariable, self.evidenceVars)                 
+    #    result = VE(self.net, self.queryVariable, self.evidenceVars)
 
     #    self.answer = [result]
-                
+
     #def printanswer(self):
-    #    outstr = repr(self.answer)         
+    #    outstr = repr(self.answer)
     #    print(outstr)
-        
+
 if __name__ == '__main__':
-    
+
 
     #Example Bayes Net
     VisitAsia = Variable('Visit_To_Asia', ['visit', 'no-visit'])
     F1 = Factor("F1", [VisitAsia])
     F1.add_values([['visit', 0.01], ['no-visit', 0.99]])
-    
+
     Smoking = Variable('Smoking', ['smoker', 'non-smoker'])
     F2 = Factor("F2", [Smoking])
     F2.add_values([['smoker', 0.5], ['non-smoker', 0.5]])
@@ -366,7 +364,7 @@ if __name__ == '__main__':
                     [False, 0.998]])
 
 
-    
+
     F12 = Factor("F12", [Burglary, Earthquake, Alarm])
     F12.add_values([[True, True, True, .95],
                     [True, True, False, .05],
@@ -417,7 +415,7 @@ if __name__ == '__main__':
     #t16 = VETest(AlarmNet,[[John, False], [Mary, False], [Earthquake, True]],Alarm,[[0.012901897594550255, 0.9870981024054498]], 5, "Variable Elimination Test 4")
     #t17 = VETest(AlarmNet,[[Burglary, False], [Mary, True], [Earthquake, False]],John,[[0.10565949485500468, 0.8943405051449953]], 5, "Variable Elimination Test 5")
 
-    
+
     mark = 0
     outof = 0
 
@@ -489,5 +487,4 @@ if __name__ == '__main__':
     #mark += m
     #outof += o
 
-    print("Mark on student tests = {}/{}".format(mark, outof))
-    
+    print("Mark on tests = {}/{}".format(mark, outof))

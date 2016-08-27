@@ -1,14 +1,21 @@
-##Description of Files:
+# Project Description
+In this project, I implement the variable elimination algorithm used for
+inference in Bayesian Networks.
 
-The tester is now available in the file student_test_a3.py: Test your implementation by placing this file in the same directory as your bnet.py implementation python3 student_test_a3.py Or if the default python on your system is already python3 you should be able to execute python student_test_a3.py Remember that if you pass all of the tests run by student_test_a3.py then you will obtain a passing mark in the assignment. If you fail all of these tests you will obtain a zero on the assignment.
+## Description of Files
+- bnet.py
+    * In this file, I define the following classes:
+        - *Variable*: the variables used in the Bayes Net
+        - *Factor*: the factors used in the Bayes Net
+        - *BN*: Bayes Net structure
+    * The following procedures are implemented:
+        - *multiply_factors*, *rec_multiply_factors*: These functions implement the factor multiplication algorithm which computes the product between multiple factors and results in a factor compatible with a single instantiation in each factor.
+        - *restrict_factor*, *rec_restrict_factor*: These functions implement the factor restriction algorithm which takes as input a single factor, a variable *V* and a value *d* from the domain of that variable; the algorithm then creates and returns a new factor that is the restriction of the input factor to the assignment *V = d*.
+        - *sum_out_variable*, *rec_sumout_vars*: These functions implement the variable summation algorithm which eliminates a single variable *v* from a set *F* of factors, and returns the resulting set of factors.
+        - *min_fill_ordering*, *min_fill_var*, *compute_fill*, *remove_var*: These functions construct an undirected graph showing variable relations expressed by all conditional probability tables, and eliminate the variable which would result in the least edges to be added post elimination. This heuristic helps in bypassing the NP-hard problem of finding the optimal order in which to eliminate variables.
+        - *step_1*, *step_2*, *step_3*, *VE*: The *VE* function implements the variable elimination algorithm, which takes as input a Bayes Net object (instance of BN), a variable that is the query variable *Q*, and a list of variables *E* that are the evidence variables (all of which had some value set as evidence using the variable's *set_evidence* method). The algorithm computes the probability of every possible assignment to *Q* given the evidence specified by the evidence settings of the evidence variables. The function returns these probabilities as a list where every number corresponds to the probability of one of *Q*'s possible values. The *step_1*, *step_2*, and *step_3* helper functions run the sub-procedures that make up the variable elimination algorithm.
+- test_cases.py
+    * This file contains test cases that ensure that the Variable Elimination algorithm as well as all of its sub-processes are all correctly implemented.
 
-To obtain full marks on the assignment your code will have to pass additional tests that will be run after your assignment has been submitted. These additional tests will check for more complex cases that your code should also be able to handle if you have correctly implemented it according to the assignment specification.
-
-The assignment specification: a3.pdf
-
-The Bayes Net supplied code bnet.py
-
-Sample code specifying and solving some simple Bayes Nets example_bn.py and the master solution output from this code is in example_bn_output.txt
-
-Another set of simple tests for your implementation. simple_net.py 
-and the master solution output on these tests simple_net_output.txt
+### Technology required to run the code
+- Python3
